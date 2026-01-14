@@ -22,6 +22,7 @@ else:
 
     # Ask the user for a question via `st.text_area`.
     question = st.text_area(
+        "What do you want to know about the document?",
         placeholder="Can you give me a short summary?",
         disabled=not uploaded_file,
     )
