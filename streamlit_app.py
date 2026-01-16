@@ -8,9 +8,7 @@ st.title("Document Q&A")
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
 openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+if openai_api_key:
 
     # Create an OpenAI client.
     client = OpenAI(api_key=openai_api_key)
@@ -40,10 +38,13 @@ else:
 
         # Generate an answer using the OpenAI API.
         stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-5-nano",
             messages=messages,
             stream=True,
         )
 
         # Stream the response to the app using `st.write_stream`.
         st.write_stream(stream)
+
+else:
+    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
