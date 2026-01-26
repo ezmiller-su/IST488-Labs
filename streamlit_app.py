@@ -4,6 +4,12 @@ from openai import OpenAI
 # Show title and description.
 st.title("Document Q&A")
 
+
+st.navigation(pages = {
+    "Lab 01": "Build a Streamlit Document Q&A app",
+    "Lab 02": "Document Summarizer",
+}, position="sidebar", expanded=False)
+
 # Ask user for their OpenAI API key via `st.text_input`.
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
