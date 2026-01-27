@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 # Show title and description.
-st.title("Document Q&A")
+st.title("Document Summarization")
 
 # Ask user for their OpenAI API key via `st.text_input`.
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
@@ -16,30 +16,33 @@ uploaded_file = st.file_uploader(
     "Upload a document (.txt or .md)", type=("txt", "md")
 )
 
-# Ask the user for a question via `st.text_area`.
-question = st.text_area(
-    "What do you want to know about the document?",
-    placeholder="Can you give me a short summary?",
+model = st.radio(
+    "Select model:",
+    options=["gpt-5-nano", "gpt-5-mini", "gpt-5-latest"],
+    index=0,
     disabled=not uploaded_file,
 )
 
-if uploaded_file and question:
+summarization = st.pills(
+    "Summarize the document:",
+    options=["100 words", "5 bullet points", "2 connecting paragraphs"],
+    disabled=not uploaded_file,
+)
 
-    # Process the uploaded file and question.
+if summarization and uploaded_file:
+
     document = uploaded_file.read().decode()
     messages = [
         {
             "role": "user",
-            "content": f"Scrutinize this document: {document} \n\n---\n\n {question}",
+            "content": f"Scrutinize this document: {document} \n\n---\n\n Summarize the document in {summarization}",
         }
     ]
 
-    # Generate an answer using the OpenAI API.
     stream = client.chat.completions.create(
-        model="gpt-5-nano",
+        model=model,
         messages=messages,
         stream=True,
     )
 
-    # Stream the response to the app using `st.write_stream`.
     st.write_stream(stream)
