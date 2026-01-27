@@ -16,13 +16,12 @@ uploaded_file = st.file_uploader(
     "Upload a document (.txt or .md)", type=("txt", "md")
 )
 
-model = st.radio(
+model = st.sidebar.radio(
     "Select model:",
-    options=["gpt-5-nano", "gpt-5-mini", "gpt-5-latest"],
+    options=["gpt-5-nano", "gpt-5-mini", "**gpt-5-latest**"],
     index=0,
-    disabled=not uploaded_file,
 )
-
+    
 summarization = st.pills(
     "Summarize the document:",
     options=["100 words", "5 bullet points", "2 connecting paragraphs"],
