@@ -16,12 +16,15 @@ uploaded_file = st.file_uploader(
     "Upload a document (.txt or .md)", type=("txt", "md")
 )
 
-model = st.sidebar.radio(
-    "Select model:",
-    options=["gpt-5-nano", "gpt-5-mini", "**gpt-5-latest**"],
-    index=0,
-)
-    
+if st.sidebar.checkbox("Use Advanced Model", key="advanced_model"):
+    model = 'gpt-5.2-chat-latest'
+else:
+    model = st.sidebar.radio(
+        "Select model:",
+        options=["gpt-5-nano", "gpt-5-mini"],
+        index=0,
+    )
+
 summarization = st.pills(
     "Summarize the document:",
     options=["100 words", "5 bullet points", "2 connecting paragraphs"],
