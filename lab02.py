@@ -1,13 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-# Show title and description.
 st.title("Document Summarization")
-
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-# Create an OpenAI client.
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
