@@ -19,6 +19,8 @@ if "messages" not in st.session_state:
 
 
 def send_message():
+    st.chat_message("user").write(message)
+    
     st.session_state.messages.append(
         {"role": "user",
         "content": message,
@@ -30,10 +32,9 @@ def send_message():
         stream=True,
     )
 
-    st.chat_message("user").write(message)
     st.chat_message("assistant").write_stream(stream)
 
-message = st.chat_input("Enter your message here:")
+message = st.chat_input("Enter your message here:", key="chat_input")
 
 if message:
     send_message()
