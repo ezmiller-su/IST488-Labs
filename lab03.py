@@ -49,5 +49,4 @@ if prompt := st.chat_input("Ask a question", key="chat_input"):
     )
     with st.chat_message("assistant"):
         st.write(response.choices[0].message.content)
-        st.write(st.session_state.messages[-4:])
     st.session_state.messages.append({"role": "assistant", "content": response.choices[0].message.content})
