@@ -1,14 +1,13 @@
+import sys
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import streamlit as st
 from openai import OpenAI
-import sys
 import chromadb
 from pathlib import Path
 from PyPDF2 import PdfReader
 import os
-
-# A fix for working with ChromaDB on Streamlit Community Cloud
-__import__('pysqlite3')
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # Create ChromaDB client
 chroma_client = chromadb.PersistentClient (path='./ChromaDB_for_Lab')
@@ -109,15 +108,29 @@ if prompt := st.chat_input("Ask a question", key="chat_input"):
     with st.chat_message("user"):
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
-    extra_context = collection.query(query_texts=[prompt], n_results=3)
+
+    client = st.session_state.openai_client
+    response = client.embeddings.create(
+    input=prompt,
+    model='text-embedding-3-small')
+    query_embedding = response.data[0].embedding
+    extra_context = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=3
+    )
+
     response = st.session_state.openai_client.chat.completions.create(
         model='gpt-5-nano',
         messages=[
             {
                 "role": "developer",
                 "content": f'''
-                Refer to previous prompts and responses for context:
-                {st.session_state.messages[-4:]}
+                Refer to previous prompts and responses for context:\n
+                {st.session_state.messages[-4:]}\n
+                If revelant, use the following context from documents to answer the question and specify the source:\n
+                {extra_context['documents'][0][0]}\n
+                {extra_context['documents'][0][1]}\n
+                {extra_context['documents'][0][2]}\n
                 '''
             },
             {
