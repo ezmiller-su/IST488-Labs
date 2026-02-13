@@ -63,7 +63,7 @@ if collection.count () == 0:
     loaded = load_pdfs_to_collection('Lab-04-Data', collection)
 
 #### MAIN APP ####
-st.title('Lab 4: Chatbot using RAG')
+st.title('RAG Pipeline with Vector DB')
 
 #### QUERYING A COLLECTION -- ONLY USED FOR TESTING ####
 #topic = st.sidebar.text_input('Topic', placeholder='Type your topic (e.g., GenAI)...')
