@@ -33,7 +33,7 @@ def get_current_weather(location):
         raise Exception('Authentication failed: Invalid API key (401 Unauthorized)')
     if response.status_code == 404:
         error_message = response.json()
-        raise Exception(f'404 error: {error_message}')
+        raise Exception(f'Weather information for {location} could not be found. Try a nearby city.')
     data = response.json()
     name = data['name']
     temp = data['main']['temp']
@@ -57,7 +57,7 @@ def get_current_weather(location):
 
 st.title('The “What to Wear” Bot')
 
-if prompt := st.text_input(label='Location'):
+if prompt := st.text_input(label='Location', label_visibility="hidden", placeholder="What are you dressing for?"):
     response = client.chat.completions.create(
         model='gpt-5-nano',
         messages=[
@@ -77,26 +77,26 @@ if prompt := st.text_input(label='Location'):
         stream=False,
     )
 
-message = response.choices[0].message
+    message = response.choices[0].message
 
-if message.tool_calls:
-    tool_call = message.tool_calls[0]
-    arguments = json.loads(tool_call.function.arguments)
-    weather_data = get_current_weather(arguments['location'])
+    if message.tool_calls:
+        tool_call = message.tool_calls[0]
+        arguments = json.loads(tool_call.function.arguments)
+        weather_data = get_current_weather(arguments['location'])
 
-    stream = client.chat.completions.create(
-        model='gpt-4o-mini',
-        messages=[
-            {"role": "developer", "content": "Summarize the weather in the user's location. Based on the weather, give the user advice on what to wear. Format articles of clothing in bullet points"},
-            {"role": "user", "content": prompt},
-            message.to_dict(),
-            {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(weather_data)}
-        ],
-        stream=True,
-    )
-    col1, col2 = st.columns(2)
-    col1.write_stream(stream)
-    col2.map(pd.DataFrame({'lat': [weather_data['lat']], 'lon': [weather_data['lon']]}), zoom=11)
+        stream = client.chat.completions.create(
+            model='gpt-4o-mini',
+            messages=[
+                {"role": "developer", "content": "Summarize the weather in the user's location. Based on the weather, give the user advice on what to wear. Format articles of clothing in bullet points"},
+                {"role": "user", "content": prompt},
+                message.to_dict(),
+                {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(weather_data)}
+            ],
+            stream=True,
+        )
+        col1, col2 = st.columns(2)
+        col1.write_stream(stream)
+        col2.map(pd.DataFrame({'lat': [weather_data['lat']], 'lon': [weather_data['lon']]}), zoom=11)
 
-else:
-    st.text(message.content)
+    else:
+        st.text(message.content)
