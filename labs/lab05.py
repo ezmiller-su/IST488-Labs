@@ -85,7 +85,7 @@ if prompt := st.text_input(label='Location', label_visibility="hidden", placehol
         weather_data = get_current_weather(arguments['location'])
 
         stream = client.chat.completions.create(
-            model='gpt-4o-mini',
+            model='gpt-5-nano',
             messages=[
                 {"role": "developer", "content": "Summarize the weather in the user's location. Based on the weather, give the user advice on what to wear. Format articles of clothing in bullet points"},
                 {"role": "user", "content": prompt},

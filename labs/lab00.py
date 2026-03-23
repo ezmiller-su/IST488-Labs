@@ -21,6 +21,8 @@ if prompt := st.chat_input("Ask a question", key="chat_input"):
             {
                 "role": "system",
                 "content": f'''
+                Use the conversation history for context:\n
+                {st.session_state.messages[-6:]}
                 '''
             },
             {
@@ -31,5 +33,5 @@ if prompt := st.chat_input("Ask a question", key="chat_input"):
         stream=False,
     )
     with st.chat_message("assistant"):
-        st.write(response.message.content)
+        st.text(response.message.content)
     st.session_state.messages.append({"role": "assistant", "content": response.message.content})
